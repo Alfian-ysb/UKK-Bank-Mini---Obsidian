@@ -171,7 +171,66 @@ flowchart LR
   UC8 -. membutuhkan .-> UC15
 ```
 
-### 3. Activity Diagram
+### 3. Flowchart
+```mermaid
+flowchart TD
+    %% Identifikasi Bentuk Simbol Standard:
+    %% ([ ... ]) = Terminal (Start/End)
+    %% [/ ... /] = Input / Output
+    %% { ... }   = Decision
+    %% [ ... ]   = Process
+    %% [( ... )] = Database
+    %% [[ ... ]] = Subroutine / Predefined Process
+    %% [\ ... \] = Document / Print Output
+
+    %% --- START & AUTHENTICATION ---
+    Start([Mulai Admin Session]) --> InputLogin[/Input Username & Password/]
+    InputLogin --> AuthCheck{Autentikasi & Role Admin?}
+
+    AuthCheck -- Tidak --> ShowError[/Tampilkan Pesan 'Akses Ditolak'/]
+    ShowError --> InputLogin
+
+    AuthCheck -- Ya --> ShowDashboard[Tampilkan Dashboard Utama Admin]
+
+    %% --- MENU UTAMA ---
+    ShowDashboard --> SelectMenu{Pilih Menu Operasional}
+
+    %% --- FITUR 1: MANAJEMEN USER ---
+    SelectMenu -- 1. Manajemen User --> InputUser[/Input Data User: Username, Password, Role/]
+    InputUser --> ValidUserCheck{Validasi Input Lengkap?}
+    ValidUserCheck -- Tidak --> ShowUserErr[/Tampilkan Warning Form Validasi/]
+    ShowUserErr --> InputUser
+    ValidUserCheck -- Ya --> SaveUserDB[(Simpan / Update Tabel users)]
+    SaveUserDB --> ReturnDash1[Kembali ke Dashboard]
+
+    %% --- FITUR 2: MASTER REKENING NASABAH ---
+    SelectMenu -- 2. Master Rekening --> ExecGenRek[[Process: Auto-Generate No Rekening<br/>Format: ThnAjaran + NoUrut]]
+    ExecGenRek --> InputNasabah[/Input Data: NIS, Nama, ID Kelas, PIN/]
+    InputNasabah --> SaveRekDB[(Simpan Tabel nasabah & Assign No Rekening)]
+    SaveRekDB --> ReturnDash2[Kembali ke Dashboard]
+
+    %% --- FITUR 3: KONFIGURASI SISTEM ---
+    SelectMenu -- 3. Konfigurasi Sistem --> InputConfig[/Input Config: Saldo Min Rp10.000, Scanner QR/]
+    InputConfig --> SaveConfigDB[(Update Konfigurasi Global)]
+    SaveConfigDB --> ReturnDash3[Kembali ke Dashboard]
+
+    %% --- FITUR 4: AUDIT JURNAL AKUNTANSI ---
+    SelectMenu -- 4. Audit Jurnal --> ReadJurnal[(Read-Only: Fetch Data Tabel jurnal_akuntansi)]
+    ReadJurnal --> DisplayJurnal[/Tampilkan Tabel Jurnal Debet & Kredit/]
+    DisplayJurnal --> PrintAudit[\Cetak / Display Draft Jurnal Audit\]
+    PrintAudit --> ReturnDash4[Kembali ke Dashboard]
+
+    %% --- NAVIGATION & LOGOUT ---
+    ReturnDash1 --> ShowDashboard
+    ReturnDash2 --> ShowDashboard
+    ReturnDash3 --> ShowDashboard
+    ReturnDash4 --> ShowDashboard
+
+    SelectMenu -- Logout --> ClearSession[Hapus Token JWT / Session]
+    ClearSession --> End([Selesai / Logout])
+```
+
+### 4. Activity Diagram
 
 ```mermaid
 flowchart TD
@@ -242,7 +301,7 @@ flowchart TD
 
 ```
 
-### 4. Sequence Diagram
+### 5. Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -319,7 +378,7 @@ sequenceDiagram
   FE-->>S: Status laporan menjadi approved
 ```
 
-### 5. Class Diagram
+### 6. Class Diagram
 
 ```mermaid
 classDiagram
@@ -369,7 +428,7 @@ classDiagram
   Transaksi "1" --> "0..*" JurnalAkuntansi : menghasilkan
 ```
 
-### 6. Data Model / Entity Relationship (ERD)
+### 7. Data Model / Entity Relationship (ERD)
 
 ```mermaid
 erDiagram
@@ -413,7 +472,7 @@ erDiagram
     }
 ```
 
-### 7. User Interface Design (Wireframe Deskriptif)
+### 8. User Interface Design (Wireframe Deskriptif)
 
 - Komponen:
     - Field: Username
@@ -466,7 +525,7 @@ erDiagram
 - Catatan keamanan:
     - PIN tidak dapat ditampilkan; PIN hanya digunakan saat konfirmasi penarikan.
 
-### 8. Deployment Diagram (Mermaid)
+### 9. Deployment Diagram (Mermaid)
 
 ```mermaid
 flowchart LR
@@ -481,7 +540,7 @@ flowchart LR
 
 ```
 
-### 9. Matriks Relasi
+### 10. Matriks Relasi
 
 | **Aktor** | **Activity: Setoran Tunai** | **Activity: Penarikan Tunai** | **Activity: Penutupan Kas & Laporan Harian** |
 | --- | --- | --- | --- |
